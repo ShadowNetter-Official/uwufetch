@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# === CONFIG ===
+# Random messages
+QUOTES=(
+  "Arch BTW."
+  "Type fast, think faster."
+  "Your shell is your canvas — paint with code."
+  "It's not a bug, it's a feature."
+  "System uptime: $(uptime -p)"
+  "It's only illegal if you get caught"
+  "May your uptime be long and your processes few."
+)
+
+# Nerd Font icons
+ICON1="󰣇"
+ICON2=""
+ICON3=""
+
+# Your ASCII Art
+ASCII_ART=$(cat << "EOF"
+      /\
+     /  \
+    /\   \
+   /      \
+  /        \
+ /   |''|   \
+/_-''    ''-_\
+EOF
+)
+
+# === FUNCTIONS ===
+# Center single-line text
+center() {
+    termwidth=$(tput cols)
+    padding=$(( (termwidth - ${#1}) / 2 ))
+    (( padding < 0 )) && padding=0
+    printf "%*s%s\n" $padding "" "$1"
+}
+
+# Center multi-line ASCII art while keeping internal spacing
+center_ascii_art() {
+    termwidth=$(tput cols)
+    max_length=$(echo "$ASCII_ART" | awk '{ print length }' | sort -nr | head -1)
+    line_padding=$(( (termwidth - max_length) / 2 ))
+    (( line_padding < 0 )) && line_padding=0
+    while IFS= read -r line; do
+        printf "%*s%s\n" $line_padding "" "$line"
+    done <<< "$ASCII_ART"
+}
+
+# === DISPLAY ===
+
+# Pick a random quote
+RANDOM_TEXT=${QUOTES[$RANDOM % ${#QUOTES[@]}]}
+
+# ASCII art
+center_ascii_art
+echo ""
+
+# Username
+center "$(whoami)"
+echo ""
+
+# Nerd Font Icons
+center "$ICON1  $ICON2  $ICON3"
+echo ""
+
+# Date
+center "$(date '+%A, %d July %Y')"
+echo ""
+
+# Random quote
+center "$RANDOM_TEXT"
+
+echo ""
